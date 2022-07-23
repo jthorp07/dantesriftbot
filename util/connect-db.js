@@ -1,5 +1,5 @@
 const { ConnectionPool } = require('mssql');
-const {createConnection} = require('mysql2');
+const { createConnection, Connection } = require('mysql2');
 
 module.exports = {
 
@@ -102,16 +102,17 @@ module.exports = {
     /**
      * Retrieves a connection to a MySQL server
      * 
-     * @param {*} options 
-     * @returns 
+     * @param {Object} options 
+     * @returns {Promise<Connection>}
      */
     async connectToMySQL(options) {
         return new Promise((resolve, reject) => {
 
             // Check params
             console.log('  [MySQL Database]: ');
-            if (!options.database || !options.username || !options.password) {
+            if (!options.database || !options.user || !options.password) {
                 reject('INVALID_ARGS');
+                return;
             }
 
             // Create connection var and check for errors
@@ -121,7 +122,8 @@ module.exports = {
                 // Error check
                 if (err) {
                     console.log('  [MySQL Database]: Error connecting to database');
-                    reject('CONNECTION_ERR');
+                    reject(err);
+                    return;
                 }
 
                 console.log('  [MySQL Database]: Connection established');
