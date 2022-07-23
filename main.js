@@ -22,6 +22,7 @@ const intent_flags = [
 	GatewayIntentBits.DirectMessages,
 	GatewayIntentBits.DirectMessageReactions,
 	GatewayIntentBits.DirectMessageTyping,
+	GatewayIntentBits.MessageContent
 ];
 
 const client = new Client({ intents: intent_flags });
