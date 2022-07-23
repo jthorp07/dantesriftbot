@@ -11,7 +11,7 @@ for (const file of commandFiles) {
 	commands.push(command.data.toJSON());
 }
 
-const rest = new REST({ version: '9' }).setToken(TOKEN);
+const rest = new REST({ version: '10' }).setToken(TOKEN);
 
 // For Guild Commands (for now, all commands will be Guild scope in the test server)
 rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), { body: commands })
@@ -22,6 +22,6 @@ rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), { body: commands 
 
 // This will be for Global scope commands (if applicable)
 
-// rest.put(Routes.applicationGuildCommands(clientId), { body: commands })
+// rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands })
 // 	.then(() => console.log('Successfully registered application commands.'))
 // 	.catch(console.error);

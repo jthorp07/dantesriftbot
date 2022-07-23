@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits, Collection, InteractionType, ComponentType } = require("discord.js");
-const { TOKEN, MYSQL } = require("./config-template.json");
+const { TOKEN, MYSQL } = require("./config.json");
 const fs = require("fs");
 const { checkPermissions, connectToMySQL } = require("./util");
 const {fork} = require('child_process');
@@ -8,7 +8,7 @@ const {fork} = require('child_process');
  *	Launch a second process executing deploy-commands.js to ensure all 
  *	commands are up to date on Discord's end
  */
-fork('./desploy-commands.js');
+fork('./deploy-commands.js');
 
 // Holy crap that's a lot of intention :flushed:
 const intent_flags = [
@@ -32,8 +32,15 @@ const client = new Client({ intents: intent_flags });
   ** WARNING ** Only supports MySQL for now - Will add MSSQL later
 */
 console.log('[Startup]: Connecting to database');
-const con = await connectToMySQL(MYSQL); // For MS SQL -> Change the ./util require statement to grab connectToMSSQL() and use config's MSSQL object as arg
-console.log('[Startup]: Database connection ready');
+var con;
+connectToMySQL(MYSQL).then(conn => {
+	con = conn;
+	console.log('[Startup]: Database connection ready');
+})
+.catch(err => {
+	console.log(`FATAL ERROR: ${JSON.stringify(err)}`);
+	process.exit(1);
+}); // For MS SQL -> Change the ./util require statement to grab connectToMSSQL() and use config's MSSQL object as arg
 
 
 /*
@@ -190,5 +197,10 @@ client.on("interactionCreate", (interaction) => {
 		return;
 	});
 });
+
+if (typeof TOKEN !== 'string') {
+	console.log('not a string');
+	exit(1);
+}
 
 client.login(TOKEN);
